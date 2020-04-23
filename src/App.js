@@ -1,5 +1,14 @@
 import React from 'react';
+import styled from 'styled-components';
 import CardProduto from './components/CardProduto.js'
+import Filtro from './components/Filtro';
+
+const Container = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  padding: 1vw;
+  gap: 2vw;
+`
 
 class App extends React.Component {
 
@@ -45,11 +54,61 @@ class App extends React.Component {
         nome: "Item H",
         preco: 210.00 
       }
-    ]
+    ],
+
+    valorInputMinimo: "",
+    valorInputMaximo: "",
+    valorInputBuscar: ""
+  }
+
+  onChangeInputMinimo = (event) => {
+    this.setState({
+      valorInputMinimo: event.target.value,
+    });
+  }
+
+  onChangeInputMaximo = (event) => {
+    this.setState({
+      valorInputMaximo: event.target.value,
+    });
+  }
+
+  onChangeInputBuscar = (event) => {
+    this.setState({
+      valorInputBuscar: event.target.value
+    });
+  }
+
+  definelistaProdutos = () => {
+    const listaMaioresQueMinimo = this.state.produtos.filter( produto => {
+      if(this.state.valorInputMinimo === "") {
+        return true;
+      } else {
+          return produto.preco > this.state.valorInputMinimo;
+      }
+    });
+
+    const listaMenoresQueMaximo = this.state.produtos.filter( produto => {
+      if(this.state.valorInputMaximo === "") {
+        return true;
+      } else {
+          return produto.preco < this.state.valorInputMaximo;
+      }
+    });
+
+    const listaBusca = this.state.produtos.filter( produto => {
+      return produto.nome.toLowerCase().indexOf(this.state.valorInputBuscar.toLowerCase()) !== -1;
+    })
+    console.log(listaBusca)
+    const listaDeProdutos = listaBusca.filter( produto => {
+      return (listaMaioresQueMinimo.indexOf(produto) !== -1) && (listaMenoresQueMaximo.indexOf(produto) !== -1);
+    });
+
+    return listaDeProdutos;
   }
 
   render() {
-    const listaProdutos = this.state.produtos.map (produto => {
+    const listaProdutos = this.definelistaProdutos().map (produto => {
       return (
         <CardProduto key = {produto.nome}
           urlImagem={produto.imagem}
@@ -61,12 +120,22 @@ class App extends React.Component {
 
     return (
       <div>
-        <div>
-          <p>
-            
-          </p>
-        </div>
-        <div>{listaProdutos}</div>
+        <Container>
+          <Filtro
+            valorMinimo={this.state.valorInputMinimo}
+            onChangeMinimo={this.onChangeInputMinimo}
+            valorMaximo={this.state.valorInputMaximo}
+            onChangeMaximo={this.onChangeInputMaximo}
+            valorBuscar={this.state.valorInputBuscar}
+            onChangeBuscar={this.onChangeInputBuscar}
+          />
+          <div>
+            <p>
+              
+            </p>
+          </div>
+          <div>{listaProdutos}</div>
+        </Container>
       </div>
     );
   }
