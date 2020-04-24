@@ -69,55 +69,60 @@ class App extends React.Component {
         id: 1,
         imagem: "https://picsum.photos/240/240?a=1",
         nome: "Item A",
-        preco: '199.00'
+        preco: 199.00
       },
       {
         id: 2,
         imagem: "https://picsum.photos/240/240?a=2",
         nome: "Item B",
-        preco: '55.90'
+        preco: 55.90
       },
       {
         id: 3,
         imagem: "https://picsum.photos/240/240?a=3",
         nome: "Item C",
-        preco: '99.00'
+        preco: 99.00
       },
       {
         id: 4,
         imagem: "https://picsum.photos/240/240?a=4",
         nome: "Item D",
-        preco: '80.00'
+        preco: 80.00
       },
       {
         id: 5,
         imagem: "https://picsum.photos/240/240?a=5",
         nome: "Item E",
-        preco: '40.50'
+        preco: 40.50
       },
       {
         id: 6,
         imagem: "https://picsum.photos/240/240?a=7",
         nome: "Item F",
-        preco: '499.99'
+        preco: 499.99
       },
       {
         id: 7,
         imagem: "https://picsum.photos/240/240?a=8",
         nome: "Item G",
-        preco: '501.00'
+        preco: 501.00
       },
       {
         id: 8,
         imagem: "https://picsum.photos/240/240?a=1",
         nome: "Item H",
-        preco: '210.00'
+        preco: 210.00
       }
     ],
 
     valorInputMinimo: "",
     valorInputMaximo: "",
-    valorInputBuscar: ""
+    valorInputBuscar: "",
+    valorSelect: "crescente"
+  }
+
+  onChangeSelect = (event) => {
+    this.setState({valorSelect: event.target.value});
   }
 
   onChangeInputMinimo = (event) => {
@@ -167,15 +172,41 @@ class App extends React.Component {
   }
 
   render() {
-    const listaProdutos = this.definelistaProdutos().map(produto => {
+    const produtosCrescente = this.definelistaProdutos().sort(function(a,b) {
       return (
-        <CardProduto key={produto.nome}
-          urlImagem={produto.imagem}
-          nome={produto.nome}
-          preco={produto.preco}
-        />
+        a.preco - b.preco
       )
     })
+
+    const produtosDecrescente = this.definelistaProdutos().sort(function(a,b) {
+      return (
+        b.preco - a.preco
+      )
+    })
+
+    let listaProdutos = []
+
+    if (this.state.valorSelect === "crescente") {
+      listaProdutos = produtosCrescente.map(produto => {
+        return (
+          <CardProduto key={produto.id}
+            urlImagem={produto.imagem}
+            nome={produto.nome}
+            preco={produto.preco}
+          />
+        )
+      })
+    } else {
+      listaProdutos = produtosDecrescente.map(produto => {
+        return (
+          <CardProduto key={produto.id}
+            urlImagem={produto.imagem}
+            nome={produto.nome}
+            preco={produto.preco}
+          />
+        )
+      })
+    }
 
     return (
       <Container>
@@ -195,7 +226,7 @@ class App extends React.Component {
               {'Quantidade de Produtos: '}
               {listaProdutos.length}
             </p>
-            <select>
+            <select value={this.state.valorSelect} onChange={this.onChangeSelect}>
               <option value="crescente">Preço: Crescente</option>
               <option value="decrescente">Preço: Decrescente</option>
             </select>
