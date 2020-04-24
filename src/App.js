@@ -1,15 +1,16 @@
 import React from 'react';
+import styled from 'styled-components';
 import CardProduto from './components/CardProduto.js'
 import styled from 'styled-components'
 import Filtro from './components/Filtro';
 import carrinho from './imagens/carrinho.png'
+import Filtro from './components/Filtro';
 
 const Container = styled.div`
   display: grid;
   grid-template-columns: 1fr 3fr;
-  grid-template-rows: 3fr;
   padding: 1vw;
-  gap: 1vw;
+  gap: 2vw;
 `
 
 const Filtros = styled.div`
