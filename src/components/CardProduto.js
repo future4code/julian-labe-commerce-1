@@ -3,8 +3,19 @@ import styled from 'styled-components'
 
 const ContainerProdutos = styled.div`
   border-image: initial;
-  border: 1px dashed orange;
+  border: 1px dotted black;
   padding: 1vh;
+
+  p {
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+  }
+`
+const Imagem = styled.img`
+  width: 100%
 `
 
 const BotaoAdicionaCarrinho = styled.button`
@@ -16,20 +27,19 @@ const BotaoAdicionaCarrinho = styled.button`
   padding: 10px;
 `
 
-class CardProduto extends React.Component {
-  render() {
-    return (
-      <ContainerProdutos>
-        <img src={this.props.urlImagem} alt={"imagem-produto"} />
-        <p>{this.props.nome}</p>
-        <p>
-          {'R$ '}
-          {this.props.preco}
-        </p>
-        <BotaoAdicionaCarrinho>Adicionar ao Carrinho</BotaoAdicionaCarrinho>
-      </ContainerProdutos>
-    );
-  }
+const CardProduto = (props) => {
+
+  return (
+    <ContainerProdutos>
+      <Imagem src={props.urlImagem} alt={"imagem-produto"} />
+      <p>{props.nome}</p>
+      <p>
+        {'R$ '}
+        {props.preco}
+      </p>
+      <BotaoAdicionaCarrinho onClick={() => props.adicionarAoCarrinho(props.id, props.nome, props.preco)}>Adicionar ao Carrinho</BotaoAdicionaCarrinho>
+    </ContainerProdutos>
+  );
 }
 
 export default CardProduto;

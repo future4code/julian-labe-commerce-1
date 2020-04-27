@@ -2,13 +2,24 @@ import React from 'react';
 import styled from 'styled-components';
 import CardProduto from './components/CardProduto.js'
 import Filtro from './components/Filtro';
-import carrinho from './imagens/carrinho.png'
+import IconeCarrinho from './imagens/carrinho.png'
+import Carrinho from './components/Carrinho.js';
+import ItemCarrinho from './components/ItemCarrinho.js'
 
 const Container = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 3fr;
-  padding: 1vw;
-  gap: 2vw;
+  .true {
+    display: grid;
+    padding: 1vw;
+    gap: 2vw;
+    grid-template-columns: 1fr 3fr 1fr;
+  }
+
+  .false {
+    display: grid;
+    padding: 1vw;
+    gap: 2vw;
+    grid-template-columns: 1fr 3fr;
+  }
 `
 
 const Filtros = styled.div`
@@ -65,63 +76,92 @@ class App extends React.Component {
   state = {
     produtos: [
       {
-        id: 1,
-        imagem: "https://picsum.photos/240/240?a=1",
-        nome: "Item A",
-        preco: 199.00
+        id: Date.now(),
+        imagem: "https://images-americanas.b2w.io/produtos/01/00/img/417533/2/417533241_1GG.jpg",
+        nome: "Placas Decorativas Espaço Sideral 20x30cm Kit 4un",
+        preco: 59.90
       },
       {
-        id: 2,
-        imagem: "https://picsum.photos/240/240?a=2",
-        nome: "Item B",
-        preco: 55.90
+        id: Date.now(),
+        imagem: "https://images-americanas.b2w.io/produtos/01/00/img/1347779/6/1347779607_1GG.jpg",
+        nome: "Relógio De Parede Galáxias Astronomia Espaço Sideral",
+        preco: 46.80
       },
       {
-        id: 3,
-        imagem: "https://picsum.photos/240/240?a=3",
-        nome: "Item C",
-        preco: 99.00
+        id: Date.now(),
+        imagem: "https://images-americanas.b2w.io/produtos/01/00/sku/23936/3/23936341_1GG.jpg",
+        nome: "Foguete De Papelão - Eu Amo Papelão",
+        preco: 169.90
       },
       {
-        id: 4,
-        imagem: "https://picsum.photos/240/240?a=4",
-        nome: "Item D",
-        preco: 80.00
+        id: Date.now(),
+        imagem: "https://images-americanas.b2w.io/produtos/01/00/img/1196989/6/1196989690_1GG.jpg",
+        nome: "Foguete magnético montado metal",
+        preco: 359.99
       },
       {
-        id: 5,
-        imagem: "https://picsum.photos/240/240?a=5",
-        nome: "Item E",
-        preco: 40.50
+        id: Date.now(),
+        imagem: "https://images-americanas.b2w.io/produtos/01/00/sku/19780/9/19780933_1GG.jpg",
+        nome: "Ônibus Espacial Discovery + Foguetes",
+        preco: 634.13
       },
       {
-        id: 6,
-        imagem: "https://picsum.photos/240/240?a=7",
-        nome: "Item F",
-        preco: 499.99
+        id: Date.now(),
+        imagem: "https://images-americanas.b2w.io/produtos/01/00/sku/42562/8/42562852_1GG.jpg",
+        nome: "Luminária Pendente Foguete - Usare Design",
+        preco: 943.10
       },
       {
-        id: 7,
-        imagem: "https://picsum.photos/240/240?a=8",
-        nome: "Item G",
-        preco: 501.00
+        id: Date.now(),
+        imagem: "https://images-americanas.b2w.io/produtos/01/00/img/52203/8/52203827_1GG.jpg",
+        nome: "Luminaria 3D Touch Lua Cheia Abajur LED Decoracao USB",
+        preco: 57.88
       },
       {
-        id: 8,
-        imagem: "https://picsum.photos/240/240?a=1",
-        nome: "Item H",
-        preco: 210.00
+        id: Date.now(),
+        imagem: "https://images-americanas.b2w.io/produtos/01/00/img4/172851/3/172851362_1GG.jpg",
+        nome: "Caneca Nasa Logotipo Foguete Apolo 11 Agência Espacial",
+        preco: 24.99
       }
     ],
 
     valorInputMinimo: "",
     valorInputMaximo: "",
     valorInputBuscar: "",
-    valorSelect: "crescente"
+    valorSelect: "crescente",
+    carrinhoNaTela: false,
+    produtosCarrinho: [],
+    valorTotal: 0.00
+  }
+
+  adicionarAoCarrinho = (produtoId, nomeProduto, precoProduto) => {
+    const novoProdutoNoCarrinho = {
+      id: produtoId,
+      nome: nomeProduto,
+      preco: precoProduto,
+      contador: 0
+    }
+
+      const copiaProdutosCarrinho = [...this.state.produtosCarrinho, novoProdutoNoCarrinho]
+
+      copiaProdutosCarrinho.forEach((produto) => {
+        this.setState({ valorTotal: this.state.valorTotal + produto.preco })
+        if (produto.id === produtoId) {
+          produto.contador += 1
+        }
+      })
+
+      this.setState({
+        produtosCarrinho: copiaProdutosCarrinho
+      })
+  }
+
+  mostraCarrinho = () => {
+    this.setState({ carrinhoNaTela: !this.state.carrinhoNaTela })
   }
 
   onChangeSelect = (event) => {
-    this.setState({valorSelect: event.target.value});
+    this.setState({ valorSelect: event.target.value });
   }
 
   onChangeInputMinimo = (event) => {
@@ -171,13 +211,13 @@ class App extends React.Component {
   }
 
   render() {
-    const produtosCrescente = this.definelistaProdutos().sort(function(a,b) {
+    const produtosCrescente = this.definelistaProdutos().sort(function (a, b) {
       return (
         a.preco - b.preco
       )
     })
 
-    const produtosDecrescente = this.definelistaProdutos().sort(function(a,b) {
+    const produtosDecrescente = this.definelistaProdutos().sort(function (a, b) {
       return (
         b.preco - a.preco
       )
@@ -188,7 +228,10 @@ class App extends React.Component {
     if (this.state.valorSelect === "crescente") {
       listaProdutos = produtosCrescente.map(produto => {
         return (
-          <CardProduto key={produto.id}
+          <CardProduto 
+            adicionarAoCarrinho={this.adicionarAoCarrinho}
+            key={produto.id}
+            id={produto.id}
             urlImagem={produto.imagem}
             nome={produto.nome}
             preco={produto.preco}
@@ -198,7 +241,10 @@ class App extends React.Component {
     } else {
       listaProdutos = produtosDecrescente.map(produto => {
         return (
-          <CardProduto key={produto.id}
+          <CardProduto 
+            adicionarAoCarrinho={this.adicionarAoCarrinho}
+            key={produto.id}
+            id={produto.id}
             urlImagem={produto.imagem}
             nome={produto.nome}
             preco={produto.preco}
@@ -207,36 +253,59 @@ class App extends React.Component {
       })
     }
 
+    let carrinho
+
+    if (this.state.carrinhoNaTela === true) {
+      carrinho = "true"
+    } else {
+      carrinho = "false"
+    }
+
+    const listaProdutosCarrinho = this.state.produtosCarrinho.map(produto => {
+      return (
+        <ItemCarrinho
+          contador={produto.contador}
+          nome={produto.nome}
+        />
+      )
+    })
+
     return (
-      <Container>
-        <Filtros>
-          <Filtro
-            valorMinimo={this.state.valorInputMinimo}
-            onChangeMinimo={this.onChangeInputMinimo}
-            valorMaximo={this.state.valorInputMaximo}
-            onChangeMaximo={this.onChangeInputMaximo}
-            valorBuscar={this.state.valorInputBuscar}
-            onChangeBuscar={this.onChangeInputBuscar}
+      <Container >
+        <div className={carrinho}>
+          <Filtros>
+            <Filtro
+              valorMinimo={this.state.valorInputMinimo}
+              onChangeMinimo={this.onChangeInputMinimo}
+              valorMaximo={this.state.valorInputMaximo}
+              onChangeMaximo={this.onChangeInputMaximo}
+              valorBuscar={this.state.valorInputBuscar}
+              onChangeBuscar={this.onChangeInputBuscar}
+            />
+          </Filtros>
+          <Section>
+            <Header>
+              <p>
+                {'Quantidade de Produtos: '}
+                {listaProdutos.length}
+              </p>
+              <select value={this.state.valorSelect} onChange={this.onChangeSelect}>
+                <option value="crescente">Preço: Crescente</option>
+                <option value="decrescente">Preço: Decrescente</option>
+              </select>
+            </Header>
+            <Produtos>
+              {listaProdutos}
+            </Produtos>
+          </Section>
+          <Carrinho
+            produtos={listaProdutosCarrinho}
+            total={this.state.valorTotal}
           />
-        </Filtros>
-        <Section>
-          <Header>
-            <p>
-              {'Quantidade de Produtos: '}
-              {listaProdutos.length}
-            </p>
-            <select value={this.state.valorSelect} onChange={this.onChangeSelect}>
-              <option value="crescente">Preço: Crescente</option>
-              <option value="decrescente">Preço: Decrescente</option>
-            </select>
-          </Header>
-          <Produtos>
-            {listaProdutos}
-          </Produtos>
-        </Section>
-        <BotaoCarrinho>
-          <img alt="icone-carrinho" src={carrinho} />
-        </BotaoCarrinho>
+          <BotaoCarrinho onClick={this.mostraCarrinho}>
+            <img alt="icone-carrinho" src={IconeCarrinho} />
+          </BotaoCarrinho>
+        </div>
       </Container>
     );
   }
